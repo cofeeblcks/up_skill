@@ -1,0 +1,115 @@
+"use client"
+
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Button } from "@/components/ui/button"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { Bell, Loader2, Sparkles } from "lucide-react"
+
+interface User {
+  name: string
+  email: string
+  avatar?: string
+  points?: number
+}
+
+interface DashboardTopbarProps {
+  user: User
+  title?: string
+  showPoints?: boolean
+}
+
+export function DashboardTopbar({ user, title = "Panel", showPoints = true }: DashboardTopbarProps) {
+  const router = useRouter()
+  const [isSigningOut, setIsSigningOut] = useState(false)
+
+  const handleSignOut = async () => {
+    setIsSigningOut(true)
+    await new Promise((res) => setTimeout(res, 600))
+    router.push("/")
+  }
+  const initials = user.name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase()
+
+  return (
+    <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/95 px-6 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+      <div className="flex items-center gap-4">
+        <h1 className="text-lg font-semibold text-foreground">{title}</h1>
+      </div>
+
+      <div className="flex items-center gap-4">
+        {/* Points Badge */}
+        {showPoints && user.points !== undefined && user.points > 0 && (
+          <div className="flex items-center gap-2 rounded-full bg-primary/10 px-4 py-2">
+            <Sparkles className="h-4 w-4 text-primary" />
+            <span className="text-sm font-semibold text-primary">
+              {new Intl.NumberFormat("en-US").format(user.points)} pts
+            </span>
+          </div>
+        )}
+
+        {/* Notifications */}
+        <Button variant="ghost" size="icon" className="relative">
+          <Bell className="h-5 w-5 text-muted-foreground" />
+          <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+            3
+          </span>
+        </Button>
+
+        {/* User Menu */}
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" className="relative h-9 w-9 rounded-full">
+              <Avatar className="h-9 w-9">
+                <AvatarImage src={user.avatar} alt={user.name} />
+                <AvatarFallback className="bg-primary text-primary-foreground">
+                  {initials}
+                </AvatarFallback>
+              </Avatar>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className="w-56" align="end" forceMount>
+            <DropdownMenuLabel className="font-normal">
+              <div className="flex flex-col space-y-1">
+                <p className="text-sm font-medium leading-none">{user.name}</p>
+                <p className="text-xs leading-none text-muted-foreground">
+                  {user.email}
+                </p>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => router.push("/dashboard/profile")}>
+              Perfil
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={handleSignOut}
+              disabled={isSigningOut}
+              className="text-destructive focus:text-destructive"
+            >
+              {isSigningOut ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Cerrando sesión...
+                </>
+              ) : (
+                "Cerrar Sesión"
+              )}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </header>
+  )
+}

@@ -6,6 +6,15 @@ import { usePathname, useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 import { UpSkillLogo } from "@/components/upskill-logo"
 import {
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  SidebarFooter,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+} from "@/components/ui/sidebar"
+import {
   LayoutDashboard,
   BookOpen,
   Trophy,
@@ -61,53 +70,62 @@ export function DashboardSidebar({ role = "EMPLOYEE" }: DashboardSidebarProps) {
         : employeeNavItems
 
   return (
-    <aside className="fixed left-0 top-0 z-40 flex h-screen w-64 flex-col border-r border-border bg-secondary">
-      <div className="flex h-16 items-center gap-2 border-b border-border px-6">
-        <UpSkillLogo />
-      </div>
+    <Sidebar variant="sidebar" className="border-r border-border">
+      <SidebarHeader className="flex h-16 shrink-0 items-center justify-center border-b border-border">
+        <div className="w-full px-4 flex items-center justify-start">
+          <UpSkillLogo />
+        </div>
+      </SidebarHeader>
 
-      <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-4">
-        {navItems.map((item) => {
-          // Exact match for root dashboard routes, startsWith for nested routes
-          const isActive =
-            item.href.split("/").length > 2
-              ? pathname === item.href || pathname.startsWith(item.href + "/")
-              : pathname === item.href
-          return (
-            <Link
-              key={item.href}
-              href={item.href}
-              className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200",
-                isActive
-                  ? "bg-primary text-primary-foreground shadow-sm shadow-primary/30"
-                  : "text-muted-foreground hover:bg-card hover:text-foreground"
-              )}
+      <SidebarContent className="px-2 py-4">
+        <SidebarMenu className="space-y-1">
+          {navItems.map((item) => {
+            const isActive =
+              item.href.split("/").length > 2
+                ? pathname === item.href || pathname.startsWith(item.href + "/")
+                : pathname === item.href
+            return (
+              <SidebarMenuItem key={item.href}>
+                <SidebarMenuButton 
+                  asChild 
+                  isActive={isActive} 
+                  tooltip={item.label}
+                  className={cn(
+                    "font-medium transition-all duration-200 py-5",
+                    isActive
+                      ? "bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground shadow-sm shadow-primary/30"
+                      : "text-muted-foreground"
+                  )}
+                >
+                  <Link href={item.href}>
+                    <item.icon className={cn("size-5 transition-transform duration-200", isActive && "scale-110")} />
+                    <span>{item.label}</span>
+                  </Link>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            )
+          })}
+        </SidebarMenu>
+      </SidebarContent>
+
+      <SidebarFooter className="p-2 border-t border-border">
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <SidebarMenuButton
+              onClick={handleSignOut}
+              disabled={isSigningOut}
+              className="w-full py-5 font-medium transition-all duration-200 text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
             >
-              <item.icon className={cn("h-5 w-5 transition-transform duration-200", isActive && "scale-110")} />
-              {item.label}
-              {isActive && (
-                <span className="ml-auto h-1.5 w-1.5 rounded-full bg-primary-foreground/70" />
+              {isSigningOut ? (
+                <Loader2 className="size-5 animate-spin" />
+              ) : (
+                <LogOut className="size-5" />
               )}
-            </Link>
-          )
-        })}
-      </nav>
-
-      <div className="border-t border-border p-3 space-y-1">
-        <button
-          onClick={handleSignOut}
-          disabled={isSigningOut}
-          className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 text-muted-foreground hover:bg-destructive/10 hover:text-destructive disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {isSigningOut ? (
-            <Loader2 className="h-5 w-5 animate-spin" />
-          ) : (
-            <LogOut className="h-5 w-5" />
-          )}
-          {isSigningOut ? "Cerrando sesión..." : "Cerrar Sesión"}
-        </button>
-      </div>
-    </aside>
+              <span>{isSigningOut ? "Cerrando sesión..." : "Cerrar Sesión"}</span>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarFooter>
+    </Sidebar>
   )
 }

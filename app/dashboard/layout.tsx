@@ -1,5 +1,6 @@
 import { DashboardSidebar } from "@/components/dashboard-sidebar"
 import { DashboardTopbar } from "@/components/dashboard-topbar"
+import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar"
 
 // Mock user data - will be replaced with actual auth data
 const mockUser = {
@@ -15,12 +16,12 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   return (
-    <div className="min-h-screen bg-background">
+    <SidebarProvider>
       <DashboardSidebar role="EMPLOYEE" />
-      <div className="pl-64">
+      <SidebarInset className="flex w-full flex-col">
         <DashboardTopbar user={mockUser} />
-        <main className="p-6">{children}</main>
-      </div>
-    </div>
+        <main className="flex-1 p-4 md:p-6 overflow-x-hidden">{children}</main>
+      </SidebarInset>
+    </SidebarProvider>
   )
 }

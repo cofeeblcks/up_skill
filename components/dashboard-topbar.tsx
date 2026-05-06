@@ -14,6 +14,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Bell, Loader2, Sparkles } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
+import { SidebarTrigger } from "@/components/ui/sidebar"
 
 interface User {
   name: string
@@ -46,6 +47,7 @@ export function DashboardTopbar({ user, title = "Panel", showPoints = true }: Da
   return (
     <header className="sticky top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-background/95 px-6 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="flex items-center gap-4">
+        <SidebarTrigger className="md:hidden" />
         <h1 className="text-lg font-semibold text-foreground">{title}</h1>
       </div>
 

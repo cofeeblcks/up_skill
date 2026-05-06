@@ -15,6 +15,15 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -148,6 +157,14 @@ export default function EmployeesPage() {
   const [loadingRow, setLoadingRow] = useState<string | null>(null)
   const [deactivateTarget, setDeactivateTarget] = useState<(typeof initialEmployees)[0] | null>(null)
   const [isDeactivating, setIsDeactivating] = useState(false)
+  const [isAddEmployeeModalOpen, setIsAddEmployeeModalOpen] = useState(false)
+  const [newEmployee, setNewEmployee] = useState({
+    name: "",
+    email: "",
+    department: "",
+    role: "EMPLOYEE",
+    position: "",
+  })
 
   const filtered = useMemo(() => {
     return employees.filter((e) => {
@@ -202,6 +219,35 @@ export default function EmployeesPage() {
     }
   }
 
+  const handleAddEmployee = async () => {
+    if (!newEmployee.name || !newEmployee.email || !newEmployee.department || !newEmployee.position) {
+      toast.error("Por favor completa todos los campos requeridos")
+      return
+    }
+
+    try {
+      const addedEmployee = {
+        id: Date.now().toString(),
+        name: newEmployee.name,
+        email: newEmployee.email,
+        role: newEmployee.role,
+        position: newEmployee.position,
+        department: newEmployee.department,
+        points: 0,
+        completedTrainings: 0,
+        totalTrainings: 0,
+        isActive: true,
+      }
+      
+      setEmployees(prev => [...prev, addedEmployee])
+      toast.success("Empleado agregado exitosamente")
+      setIsAddEmployeeModalOpen(false)
+      setNewEmployee({ name: "", email: "", department: "", role: "EMPLOYEE", position: "" })
+    } catch {
+      toast.error("Error al agregar el empleado")
+    }
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -219,7 +265,7 @@ export default function EmployeesPage() {
             <Download className="mr-2 h-4 w-4" />
             Exportar
           </Button>
-          <Button>
+          <Button onClick={() => setIsAddEmployeeModalOpen(true)}>
             <UserPlus className="mr-2 h-4 w-4" />
             Agregar Empleado
           </Button>
@@ -458,6 +504,92 @@ export default function EmployeesPage() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Add Employee Modal */}
+      <Dialog open={isAddEmployeeModalOpen} onOpenChange={setIsAddEmployeeModalOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Agregar Empleado</DialogTitle>
+            <DialogDescription>
+              Ingresa los datos del nuevo empleado. Se enviará un correo con las instrucciones de acceso.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Nombre completo</Label>
+              <Input
+                id="name"
+                placeholder="Ej: Juan Pérez"
+                value={newEmployee.name}
+                onChange={(e) => setNewEmployee({ ...newEmployee, name: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email">Correo electrónico</Label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="juan.perez@empresa.com"
+                value={newEmployee.email}
+                onChange={(e) => setNewEmployee({ ...newEmployee, email: e.target.value })}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="position">Cargo</Label>
+              <Input
+                id="position"
+                placeholder="Ej: Analista de datos"
+                value={newEmployee.position}
+                onChange={(e) => setNewEmployee({ ...newEmployee, position: e.target.value })}
+              />
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label htmlFor="department">Departamento</Label>
+                <Select
+                  value={newEmployee.department}
+                  onValueChange={(val) => setNewEmployee({ ...newEmployee, department: val })}
+                >
+                  <SelectTrigger id="department">
+                    <SelectValue placeholder="Seleccionar..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {departments.filter(d => d !== "Todos").map((dept) => (
+                      <SelectItem key={dept} value={dept}>
+                        {dept}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="role">Rol</Label>
+                <Select
+                  value={newEmployee.role}
+                  onValueChange={(val) => setNewEmployee({ ...newEmployee, role: val })}
+                >
+                  <SelectTrigger id="role">
+                    <SelectValue placeholder="Seleccionar..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="EMPLOYEE">Empleado</SelectItem>
+                    <SelectItem value="SUPERVISOR">Supervisor</SelectItem>
+                    <SelectItem value="ADMIN_HR">Admin HR</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsAddEmployeeModalOpen(false)}>
+              Cancelar
+            </Button>
+            <Button onClick={handleAddEmployee}>
+              Guardar Empleado
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }

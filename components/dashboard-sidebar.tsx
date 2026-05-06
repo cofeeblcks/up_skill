@@ -34,6 +34,7 @@ const adminNavItems = [
   { href: "/admin/trainings", label: "Capacitaciones", icon: BookOpen },
   { href: "/admin/employees", label: "Empleados", icon: Users },
   { href: "/admin/analytics", label: "Analíticas", icon: BarChart3 },
+  { href: "/admin/settings", label: "Configuración", icon: Settings },
 ]
 
 interface DashboardSidebarProps {

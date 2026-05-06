@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { UpSkillLogo } from "@/components/upskill-logo"
 import { ArrowRight, BookOpen, Loader2, Trophy, Users } from "lucide-react"
+import Image from "next/image"
 
 export default function LoginPage() {
   const router = useRouter()
@@ -72,13 +73,22 @@ export default function LoginPage() {
         </div>
         
         <p className="text-sm text-muted-foreground">
-          © 2025 UpSkill. Todos los derechos reservados.
+          © 2026 UpSkill. Todos los derechos reservados.
         </p>
       </div>
 
       {/* Right Panel - Login Form */}
-      <div className="flex w-full items-center justify-center p-8 lg:w-1/2">
-        <Card className="w-full max-w-md border-border bg-card">
+      <div className="relative flex w-full items-center justify-center p-8 lg:w-1/2 overflow-hidden">
+        <Image
+          src="/images/bg-login.png"
+          alt="Login Background"
+          fill
+          priority
+          className="absolute inset-0 z-0 object-cover"
+        />
+        <div className="absolute inset-0 z-0 bg-background/40" />
+        
+        <Card className="relative z-10 w-full max-w-md border-border bg-card/50 shadow-2xl backdrop-blur-md">
           <CardHeader className="space-y-1 text-center">
             <div className="mb-4 flex justify-center lg:hidden">
               <UpSkillLogo />

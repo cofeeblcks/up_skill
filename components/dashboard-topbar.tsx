@@ -13,6 +13,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Bell, Loader2, Sparkles } from "lucide-react"
+import { ThemeToggle } from "@/components/theme-toggle"
 
 interface User {
   name: string
@@ -60,12 +61,61 @@ export function DashboardTopbar({ user, title = "Panel", showPoints = true }: Da
         )}
 
         {/* Notifications */}
-        <Button variant="ghost" size="icon" className="relative">
-          <Bell className="h-5 w-5 text-muted-foreground" />
-          <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
-            3
-          </span>
-        </Button>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="ghost" size="icon" className="relative">
+              <Bell className="h-5 w-5 text-muted-foreground" />
+              <span className="absolute -right-0.5 -top-0.5 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-primary-foreground">
+                3
+              </span>
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-80">
+            <DropdownMenuLabel className="flex justify-between items-center">
+              <span>Notificaciones</span>
+              <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-full">3 nuevas</span>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <div className="max-h-[300px] overflow-y-auto">
+              <DropdownMenuItem className="flex flex-col items-start gap-1 p-3 cursor-pointer">
+                <div className="flex w-full items-center justify-between">
+                  <span className="font-medium text-sm">Nueva capacitación asignada</span>
+                  <span className="text-xs text-muted-foreground">Hace 5 min</span>
+                </div>
+                <span className="text-xs text-muted-foreground line-clamp-2">
+                  Se te ha asignado el curso 'Seguridad en el Trabajo'.
+                </span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="flex flex-col items-start gap-1 p-3 cursor-pointer">
+                <div className="flex w-full items-center justify-between">
+                  <span className="font-medium text-sm">Insignia desbloqueada</span>
+                  <span className="text-xs text-muted-foreground">Hace 2 horas</span>
+                </div>
+                <span className="text-xs text-muted-foreground line-clamp-2">
+                  ¡Felicidades! Has obtenido la insignia 'Primeros Pasos'.
+                </span>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem className="flex flex-col items-start gap-1 p-3 cursor-pointer">
+                <div className="flex w-full items-center justify-between">
+                  <span className="font-medium text-sm opacity-70">Recordatorio</span>
+                  <span className="text-xs text-muted-foreground opacity-70">Hace 1 día</span>
+                </div>
+                <span className="text-xs text-muted-foreground line-clamp-2 opacity-70">
+                  Tu capacitación de 'Liderazgo' vence mañana. ¡No olvides completarla!
+                </span>
+              </DropdownMenuItem>
+            </div>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem className="w-full justify-center text-primary font-medium cursor-pointer">
+              Marcar todas como leídas
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+
+        {/* Theme Toggle */}
+        <ThemeToggle />
 
         {/* User Menu */}
         <DropdownMenu>

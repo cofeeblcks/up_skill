@@ -3,6 +3,7 @@ import { Inter } from 'next/font/google'
 import { Analytics } from '@vercel/analytics/next'
 import { Toaster } from 'sonner'
 import { PageTransition } from '@/components/page-transition'
+import { ThemeProvider } from '@/components/theme-provider'
 import './globals.css'
 
 const inter = Inter({ 
@@ -11,7 +12,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: 'UpSkill | HR Training Management Platform',
+  title: 'UpSkill | Training Management Platform',
   description: 'Empower your workforce with gamified training experiences. Track progress, earn badges, and level up your skills.',
   generator: 'v0.app',
   icons: {
@@ -34,7 +35,7 @@ export const metadata: Metadata = {
 }
 
 export const viewport: Viewport = {
-  themeColor: '#0D1B2A',
+  themeColor: '#8e44ad',
 }
 
 export default function RootLayout({
@@ -43,22 +44,29 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="dark bg-background">
-      <body className={`${inter.variable} font-sans antialiased`}>
-        <PageTransition />
-        {children}
-        <Toaster 
-          theme="dark" 
-          position="top-right"
-          toastOptions={{
-            style: {
-              background: '#1A2E45',
-              border: '1px solid #1E3A5F',
-              color: '#FFFFFF',
-            },
-          }}
-        />
-        {process.env.NODE_ENV === 'production' && <Analytics />}
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${inter.variable} font-sans antialiased bg-background text-foreground`}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="dark"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <PageTransition />
+          {children}
+          <Toaster 
+            theme="dark" 
+            position="top-right"
+            toastOptions={{
+              style: {
+                background: 'var(--background)',
+                border: '1px solid var(--border)',
+                color: 'var(--foreground)',
+              },
+            }}
+          />
+          {process.env.NODE_ENV === 'production' && <Analytics />}
+        </ThemeProvider>
       </body>
     </html>
   )
